@@ -27,7 +27,6 @@ public class AdminViewController {
 
     @GetMapping
     public ResponseEntity<List<UserInfo>> getListUserInfo(){
-
         return new ResponseEntity<List<UserInfo>>(userInfoService.findAll(), HttpStatus.OK);
     }
 

@@ -63,20 +63,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().ignoringAntMatchers("/**");
         http.httpBasic().authenticationEntryPoint(restServicesEntryPoint());//Tùy chỉnh lại thông báo 401 thông qua class restEntryPoint
         http.authorizeRequests()
-                .antMatchers("/login").permitAll()
+                .antMatchers("/login","/admin").permitAll()
                 .antMatchers(
-
                         "/image/**",
                         "/changePassword/**",
                         "/username/**",
                         "/userInfo/**",
                         "/**",
                         "/register").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers("/admin").access( "hasRole('ROLE_ADMIN')")
+//                .antMatchers("/admin").access( "hasRole('ROLE_ADMIN')")
                 .anyRequest().authenticated()
-                .and().formLogin().loginPage("http://localhost:63342/case4-FE/login.html?_ijt=i4l98ev1pn324rlsqnb4h8l5ee&_ij_reload=RELOAD_ON_SAVE")
-                    .successHandler(new CustomSuccessHandler())
-                .and().exceptionHandling().accessDeniedPage("/accessDenied")
+//                .and().formLogin().loginPage("http://localhost:63342/case4-FE/login.html")
+//                .successHandler(new CustomSuccessHandler())
+//                .and().exceptionHandling().accessDeniedPage("/accessDenied")
                 .and().csrf().disable()
                 ;
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
