@@ -1,5 +1,6 @@
 package com.case4.config.security;
 
+import com.case4.config.CustomSuccessHandler;
 import com.case4.service.user.IUserService;
 import com.case4.config.CustomAccessDeniedHandler;
 import com.case4.config.JwtAuthenticationFilter;
@@ -62,18 +63,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().ignoringAntMatchers("/**");
         http.httpBasic().authenticationEntryPoint(restServicesEntryPoint());//Tùy chỉnh lại thông báo 401 thông qua class restEntryPoint
         http.authorizeRequests()
+                .antMatchers("/login").permitAll()
                 .antMatchers(
-                        "/login",
+
                         "/image/**",
                         "/changePassword/**",
                         "/username/**",
                         "/userInfo/**",
                         "/**",
-                        "/register").permitAll()
-                .antMatchers("/a")
-                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                        "/register").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers("/admin").access( "hasRole('ROLE_ADMIN')")
                 .anyRequest().authenticated()
-                .and().csrf().disable();
+                .and().formLogin().loginPage("http://localhost:63342/case4-FE/login.html?_ijt=i4l98ev1pn324rlsqnb4h8l5ee&_ij_reload=RELOAD_ON_SAVE")
+                    .successHandler(new CustomSuccessHandler())
+                .and().exceptionHandling().accessDeniedPage("/accessDenied")
+                .and().csrf().disable()
+                ;
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler());
         http.sessionManagement()
