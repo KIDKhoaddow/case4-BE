@@ -3,11 +3,14 @@ package com.case4.controller;
 import com.case4.model.dto.ChangePassword;
 import com.case4.model.dto.JwtResponse;
 import com.case4.model.dto.SignUpForm;
+import com.case4.model.entity.blog.Blog;
 import com.case4.model.entity.user.User;
 import com.case4.model.entity.user.UserInfo;
+import com.case4.model.entity.user.UserStatus;
 import com.case4.service.JwtService;
 import com.case4.service.user.IUserService;
 import com.case4.service.userInfo.UserInfoService;
+import com.case4.service.userStatus.IUserStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +22,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @CrossOrigin("*")
@@ -30,6 +37,8 @@ public class AuthController {
 
     @Autowired
     private IUserService userService;
+    @Autowired
+    private IUserStatusService userStatusService;
 
     @Autowired
     private JwtService jwtService;
@@ -55,26 +64,34 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register( @RequestBody SignUpForm user) {
+    public ResponseEntity<User> register(@RequestBody SignUpForm user) {
         if (!user.getPassword().equals(user.getConfirmPassword())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         String avatar = "avatar.jpg";
         User user1 = new User(user.getUsername(), user.getPassword());
+
+        LocalDate localDate = LocalDate.now();
+        DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        localDate.format(fmt1);
+        String userRegisDate = String.valueOf(localDate);
+        Set<Blog> blogSet =new HashSet<>();
+        UserStatus userStatus = new UserStatus();
+        userStatusService.save(userStatus);
         userService.save(user1);
+
         UserInfo userInfo = new UserInfo(
-                user.getFirstName(),
-                user.getLastName(),
+                user.getName(),
                 user.getEmail(),
                 avatar,
                 user.getPhoneNumber(),
                 user.getBirthDay(),
-                user.getAddress(),
-                user.getRegisterDate(),
+                userRegisDate,
+                userStatus,
                 user1
         );
         userInfoService.save(userInfo);
-        return new ResponseEntity<>( HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/changePassword/{id}")

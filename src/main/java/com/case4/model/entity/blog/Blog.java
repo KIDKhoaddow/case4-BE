@@ -1,7 +1,7 @@
 package com.case4.model.entity.blog;
 
 import com.case4.model.entity.classify.Category;
-import com.case4.model.entity.user.User;
+import com.case4.model.entity.user.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+
 public class Blog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,10 +21,14 @@ public class Blog {
     @ManyToOne
     private Category category;
     private String title;
-    private  String content;
-    private  String picture;
-    private  String createAt;
+    private String describes;
+    private String content;
+    private String picture;
+    private String createAt;
+    @OneToOne
+    private BlogStatus blogStatus;
     @ManyToOne
-    private User user;
+    private UserInfo userInfo;
+
 
 }

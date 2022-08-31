@@ -17,7 +17,5 @@ public class BlogStatus {
     private Long id;
     private String updateAt;
     @Enumerated(EnumType.ORDINAL)
-    private Status status;
-    @OneToOne
-    private Blog blog  ;
+    private Status status=Status.ADMITTED;
 }

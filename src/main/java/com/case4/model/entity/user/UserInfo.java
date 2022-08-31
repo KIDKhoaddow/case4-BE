@@ -15,8 +15,8 @@ public class UserInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String firstName;
-    private String lastName;
+    private String name;
+
     private String email;
 
     private String avatar;
@@ -25,44 +25,22 @@ public class UserInfo {
 
     private String birthDay;
 
-    private String address;
     private String registerDate;
 
-
+    @OneToOne
+    private UserStatus userStatus;
     @OneToOne
     private User user;
 
 
-    public UserInfo(String firstName, String lastName, String email, String avatar, String phoneNumber, String birthDay, String address, String registerDate, User user) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public UserInfo(String name, String email, String avatar, String phoneNumber, String birthDay, String registerDate, UserStatus userStatus, User user) {
+        this.name = name;
         this.email = email;
         this.avatar = avatar;
         this.phoneNumber = phoneNumber;
         this.birthDay = birthDay;
-        this.address = address;
         this.registerDate = registerDate;
-        this.user = user;
-    }
-
-    public UserInfo(String firstName, String lastName, String email, String phoneNumber, String birthDay, String address, String registerDate) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.birthDay = birthDay;
-        this.address = address;
-        this.registerDate = registerDate;
-    }
-
-    public UserInfo(String firstName, String lastName, String email, String phoneNumber, String birthDay, String address, String registerDate, User user) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.birthDay = birthDay;
-        this.address = address;
-        this.registerDate = registerDate;
+        this.userStatus = userStatus;
         this.user = user;
     }
 }

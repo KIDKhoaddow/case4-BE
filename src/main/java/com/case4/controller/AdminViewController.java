@@ -3,6 +3,7 @@ package com.case4.controller;
 import com.case4.model.entity.blog.Blog;
 import com.case4.model.entity.extra.Status;
 import com.case4.model.entity.user.UserInfo;
+import com.case4.service.blog.IBlogService;
 import com.case4.service.user.UserService;
 import com.case4.service.userInfo.IUserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class AdminViewController {
     private IUserInfoService userInfoService;
 
     @Autowired
+    private IBlogService iBlogService;
+
+    @Autowired
     private UserService userService;
 
     @GetMapping("/users")
@@ -32,7 +36,7 @@ public class AdminViewController {
     }
     @GetMapping("/blogs")
     public  ResponseEntity<List<Blog>> getListBlogs(){
-        return new ResponseEntity<>(HttpStatus.OK);
+       return new ResponseEntity<>( iBlogService.findAll(), HttpStatus.OK);
     }
 
 }

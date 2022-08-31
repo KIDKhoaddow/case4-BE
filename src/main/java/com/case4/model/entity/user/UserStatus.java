@@ -17,8 +17,7 @@ public class UserStatus {
     private Long id;
     private  String lastLogin;
     @Enumerated(EnumType.ORDINAL)
-    private Status status;
-    private boolean verify;
-    @OneToOne
-    User user;
+    private Status status=Status.OFFLINE;
+    private boolean verify=true;
+
 }

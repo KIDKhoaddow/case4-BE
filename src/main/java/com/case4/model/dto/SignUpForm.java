@@ -15,8 +15,8 @@ public class SignUpForm {
 
     private String confirmPassword;
 
-    private String firstName;
-    private String lastName;
+    private String name;
+
     private String email;
 
     private String avatar;
@@ -25,6 +25,5 @@ public class SignUpForm {
 
     private String birthDay;
 
-    private String address;
     private String registerDate;
 }
