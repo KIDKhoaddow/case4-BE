@@ -2,6 +2,7 @@ package com.case4;
 
 
 import com.case4.service.role.IRoleService;
+import com.case4.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

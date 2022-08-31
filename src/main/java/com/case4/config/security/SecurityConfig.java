@@ -3,7 +3,7 @@ package com.case4.config.security;
 import com.case4.config.CustomAccessDeniedHandler;
 import com.case4.config.JwtAuthenticationFilter;
 import com.case4.config.RestAuthenticationEntryPoint;
-
+import com.case4.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

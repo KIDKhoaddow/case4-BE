@@ -1,6 +1,7 @@
 package com.case4.config;
 
 import com.case4.service.JwtService;
+import com.case4.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
