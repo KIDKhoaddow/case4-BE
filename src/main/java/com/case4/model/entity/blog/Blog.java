@@ -21,7 +21,9 @@ public class Blog {
     @ManyToOne
     private Category category;
     private String title;
+    @Lob
     private String describes;
+    @Lob
     private String content;
     private String picture;
     private String createAt;

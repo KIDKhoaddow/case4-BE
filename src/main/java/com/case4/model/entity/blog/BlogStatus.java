@@ -17,5 +17,5 @@ public class BlogStatus {
     private Long id;
     private String updateAt;
     @Enumerated(EnumType.ORDINAL)
-    private Status status=Status.ADMITTED;
+    private Status status=Status.PENDING;
 }

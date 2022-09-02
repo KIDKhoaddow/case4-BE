@@ -1,7 +1,7 @@
 package com.case4.service.role;
 
 import com.case4.model.entity.user.Role;
-import com.case4.repository.IRoleRepository;
+import com.case4.repository.IRoleRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import java.util.Optional;
 @Service
 public class RoleService implements IRoleService{
     @Autowired
-    private IRoleRepository roleRepository;
+    private IRoleRepo roleRepository;
 
     @Override
     public List<Role> findAll() {

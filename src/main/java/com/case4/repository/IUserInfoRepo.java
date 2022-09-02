@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface IUserInfoRepository extends JpaRepository<UserInfo, Long> {
+public interface IUserInfoRepo extends JpaRepository<UserInfo, Long> {
     @Query(value = "select * from user_info where user_id = ?1", nativeQuery = true)
     UserInfo findByUserId(Long id);
 

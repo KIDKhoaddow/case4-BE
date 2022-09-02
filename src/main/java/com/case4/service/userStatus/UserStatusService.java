@@ -1,7 +1,7 @@
 package com.case4.service.userStatus;
 
 import com.case4.model.entity.user.UserStatus;
-import com.case4.repository.IUserStatusRepository;
+import com.case4.repository.IUserStatusRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public class UserStatusService implements IUserStatusService {
     @Autowired
-    IUserStatusRepository userStatusRepository;
+    IUserStatusRepo userStatusRepository;
 
     @Override
     public List<UserStatus> findAll() {

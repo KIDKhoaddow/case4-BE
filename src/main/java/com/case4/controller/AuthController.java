@@ -4,6 +4,7 @@ import com.case4.model.dto.ChangePassword;
 import com.case4.model.dto.JwtResponse;
 import com.case4.model.dto.SignUpForm;
 import com.case4.model.entity.blog.Blog;
+import com.case4.model.entity.extra.Status;
 import com.case4.model.entity.user.User;
 import com.case4.model.entity.user.UserInfo;
 import com.case4.model.entity.user.UserStatus;
@@ -23,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
@@ -60,6 +62,13 @@ public class AuthController {
         String jwt = jwtService.generateTokenLogin(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User currentUser = userService.findByUserName(user.getUsername());
+        UserInfo userInfo = userInfoService.findByUserId(currentUser.getId());
+        UserStatus userStatus = userInfo.getUserStatus();
+        if (!userStatus.isVerify()){
+            return new ResponseEntity<>(false,HttpStatus.LOCKED);
+        }
+        userStatus.setStatus(Status.ONLINE);
+        userStatusService.save(userStatus);
         return ResponseEntity.ok(new JwtResponse(currentUser.getId(), jwt, userDetails.getUsername(), userDetails.getAuthorities()));
     }
 
@@ -68,14 +77,14 @@ public class AuthController {
         if (!user.getPassword().equals(user.getConfirmPassword())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        String avatar = "avatar.jpg";
+        String avatar = "profile.png";
         User user1 = new User(user.getUsername(), user.getPassword());
 
         LocalDate localDate = LocalDate.now();
         DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         localDate.format(fmt1);
         String userRegisDate = String.valueOf(localDate);
-        Set<Blog> blogSet =new HashSet<>();
+        Set<Blog> blogSet = new HashSet<>();
         UserStatus userStatus = new UserStatus();
         userStatusService.save(userStatus);
         userService.save(user1);
@@ -130,5 +139,19 @@ public class AuthController {
             }
         }
         return new ResponseEntity<>(check, HttpStatus.OK);
+    }
+
+    @GetMapping("/logout/{id}")
+    public ResponseEntity<UserStatus> logout(@PathVariable Long id) {
+        UserInfo userInfo = userInfoService.findByUserId(id);
+        UserStatus userStatus = userInfo.getUserStatus();
+
+        LocalDateTime localDate = LocalDateTime.now();
+        DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formatDateTime = localDate.format(fmt1);
+        userStatus.setLastLogin(formatDateTime);
+        userStatus.setStatus(Status.OFFLINE);
+        userStatusService.save(userStatus);
+        return new ResponseEntity<>(userStatus, HttpStatus.OK);
     }
 }

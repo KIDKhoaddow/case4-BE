@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/userInfo")
@@ -33,7 +34,14 @@ public class UserInfoController {
     public ResponseEntity<UserInfo> findByUserId(@PathVariable Long userId) {
         return new ResponseEntity<>(userInfoService.findByUserId(userId), HttpStatus.OK);
     }
-
+    @GetMapping("/findById/{id}")
+    public ResponseEntity<UserInfo> findById(@PathVariable Long id) {
+        Optional<UserInfo> userInfo=userInfoService.findById(id);
+        if (!userInfo.isPresent()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(userInfoService.findById(id).get(), HttpStatus.OK);
+    }
     @PutMapping("/avatar/{userId}")
     public ResponseEntity<UserInfo> editAvatar(@PathVariable Long userId, @ModelAttribute PictureForm pictureForm) {
         UserInfo userInfo = userInfoService.findByUserId(userId);

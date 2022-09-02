@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserPrincipal implements UserDetails {
+
     private Long id;
 
     private String username;
@@ -22,6 +23,7 @@ public class UserPrincipal implements UserDetails {
     private String password;
 
     private List<? extends GrantedAuthority> roles;
+
 
     public static UserPrincipal build(User user) {
         List<Role> roles = user.getRoles(); //Lấy ra role của user
@@ -33,6 +35,7 @@ public class UserPrincipal implements UserDetails {
                 user.getId(),
                 user.getUsername(),
                 user.getPassword(),
+
                 authorities
         );
     }
@@ -75,4 +78,5 @@ public class UserPrincipal implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

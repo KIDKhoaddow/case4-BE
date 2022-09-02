@@ -1,7 +1,7 @@
 package com.case4.service.userInfo;
 
 import com.case4.model.entity.user.UserInfo;
-import com.case4.repository.IUserInfoRepository;
+import com.case4.repository.IUserInfoRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public class UserInfoService implements IUserInfoService {
     @Autowired
-    private IUserInfoRepository userInfoRepository;
+    private IUserInfoRepo userInfoRepository;
 
     @Override
     public List<UserInfo> findAll() {

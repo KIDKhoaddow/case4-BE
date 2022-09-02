@@ -3,7 +3,7 @@ package com.case4.service.user;
 import com.case4.model.dto.UserPrincipal;
 import com.case4.model.entity.user.Role;
 import com.case4.model.entity.user.User;
-import com.case4.repository.IUserRepository;
+import com.case4.repository.IUserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,7 +17,7 @@ import java.util.Optional;
 @Service
 public class UserService implements IUserService {
     @Autowired
-    private IUserRepository userRepository;
+    private IUserRepo userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
