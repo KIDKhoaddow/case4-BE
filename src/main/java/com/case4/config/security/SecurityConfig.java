@@ -62,7 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic().authenticationEntryPoint(restServicesEntryPoint());//Tùy chỉnh lại thông báo 401 thông qua class restEntryPoint
         http.authorizeRequests()
                 .antMatchers("/login",
-                        "/register","/Image/**","/logout/**").permitAll()
+                        "/register","/Image/**","/logout/**","/userView/**").permitAll()
                 .antMatchers(
                         "/changePassword/**",
                         "/username/**",

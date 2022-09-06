@@ -65,7 +65,7 @@ public class AuthController {
         UserInfo userInfo = userInfoService.findByUserId(currentUser.getId());
         UserStatus userStatus = userInfo.getUserStatus();
         if (!userStatus.isVerify()){
-            return new ResponseEntity<>(false,HttpStatus.LOCKED);
+            return new ResponseEntity<>("Your account has banned by Admin !",HttpStatus.LOCKED);
         }
         userStatus.setStatus(Status.ONLINE);
         userStatusService.save(userStatus);
@@ -154,4 +154,20 @@ public class AuthController {
         userStatusService.save(userStatus);
         return new ResponseEntity<>(userStatus, HttpStatus.OK);
     }
+    @GetMapping("/banUser/{id}")
+    public ResponseEntity<UserStatus> banUser(@PathVariable Long id){
+        UserStatus userStatus=userStatusService.findById(id).get();
+        userStatus.setVerify(false);
+        userStatusService.save(userStatus);
+        return new ResponseEntity<>(userStatus, HttpStatus.OK);
+    }
+
+    @GetMapping("/activeUser/{id}")
+    public ResponseEntity<UserStatus> activeUser(@PathVariable Long id){
+        UserStatus userStatus=userStatusService.findById(id).get();
+        userStatus.setVerify(true);
+        userStatusService.save(userStatus);
+        return new ResponseEntity<>(userStatus, HttpStatus.OK);
+    }
+
 }

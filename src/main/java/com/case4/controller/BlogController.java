@@ -6,7 +6,6 @@ import com.case4.model.entity.blog.BlogStatus;
 import com.case4.model.entity.user.UserInfo;
 import com.case4.service.blog.IBlogService;
 import com.case4.service.blogStautus.IBlogStatusService;
-import com.case4.service.user.UserService;
 import com.case4.service.userInfo.IUserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
@@ -35,8 +35,6 @@ public class BlogController {
     @Autowired
     private IUserInfoService userInfoService;
 
-    @Autowired
-    private UserService userService;
 
     @Value("${file-upload}")
     private String uploadPath;
@@ -59,7 +57,7 @@ public class BlogController {
         if (!userInfo.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        String image="";
+        String image = "";
         try {
             MultipartFile multipartFile = pictureForm.getPicture();
             image = multipartFile.getOriginalFilename();
@@ -67,15 +65,15 @@ public class BlogController {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-
+//lấy thông số ngày tháng năm khởi tạo
         LocalDate localDate = LocalDate.now();
         DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         localDate.format(fmt1);
         String userRegisDate = String.valueOf(localDate);
         blog.setCreateAt(userRegisDate);
 
-//        blog.setPicture(image);
 
+//Lưu vào database
         BlogStatus blogStatus = new BlogStatus();
         blogStatusService.save(blogStatus);
         blog.setBlogStatus(blogStatus);
@@ -93,6 +91,9 @@ public class BlogController {
         if (!userInfo.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+
+        //lưu ảnh truyền về
         MultipartFile multipartFile = pictureForm.getPicture();
         String image = multipartFile.getOriginalFilename();
         try {
@@ -101,8 +102,15 @@ public class BlogController {
             image = blog.getPicture();
             e.printStackTrace();
         }
+        if (!(image == null)) {
+            blog.setPicture(image);
+        }
+        //lưu lại thời gian update
+        LocalDateTime localDate = LocalDateTime.now();
+        DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formatDateTime = localDate.format(fmt1);
+        blog.getBlogStatus().setUpdateAt(formatDateTime);
 
-        blog.setPicture(image);
         blogService.save(blog);
         return new ResponseEntity<>(blog, HttpStatus.OK);
     }

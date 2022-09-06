@@ -17,7 +17,6 @@ public class CategoryController {
     private ICategorySV categorySV;
 
 
-
     @GetMapping("/{idCategory}")
     public ResponseEntity<Category> getCategory(@PathVariable Long idCategory){
         Optional<Category> category=categorySV.findById(idCategory);

@@ -30,4 +30,9 @@ public class BlogServiceImpl implements IBlogService {
     public Optional<Blog> findById(Long id) {
         return iBlogRepo.findById(id);
     }
+
+    @Override
+    public List<Blog> findAllByCategory_Name(String categoryName) {
+        return iBlogRepo.findAllByCategory_Name(categoryName);
+    }
 }

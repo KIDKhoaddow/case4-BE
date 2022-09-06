@@ -40,4 +40,8 @@ public class CategorySV implements ICategorySV{
         return categoryRepo.getAllCategoryByUserId(user_id);
     }
 
+    @Override
+    public Optional<Category> findByName(String name) {
+        return categoryRepo.findCategoryByName(name);
+    }
 }
