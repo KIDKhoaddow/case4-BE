@@ -1,7 +1,7 @@
 package com.case4.model.entity.extra;
 
 import com.case4.model.entity.blog.Blog;
-import com.case4.model.entity.user.User;
+import com.case4.model.entity.user.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +18,7 @@ public class Like {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    private User user;
+    private UserInfo userInfo;
     @ManyToOne
     private Blog blog;
 }

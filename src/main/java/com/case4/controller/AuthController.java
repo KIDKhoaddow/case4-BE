@@ -145,29 +145,14 @@ public class AuthController {
     public ResponseEntity<UserStatus> logout(@PathVariable Long id) {
         UserInfo userInfo = userInfoService.findByUserId(id);
         UserStatus userStatus = userInfo.getUserStatus();
-
-        LocalDateTime localDate = LocalDateTime.now();
-        DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formatDateTime = localDate.format(fmt1);
-        userStatus.setLastLogin(formatDateTime);
+        userStatus.setLastLogin(getUpdateAt());
         userStatus.setStatus(Status.OFFLINE);
         userStatusService.save(userStatus);
         return new ResponseEntity<>(userStatus, HttpStatus.OK);
     }
-    @GetMapping("/banUser/{id}")
-    public ResponseEntity<UserStatus> banUser(@PathVariable Long id){
-        UserStatus userStatus=userStatusService.findById(id).get();
-        userStatus.setVerify(false);
-        userStatusService.save(userStatus);
-        return new ResponseEntity<>(userStatus, HttpStatus.OK);
+    private String getUpdateAt(){
+        LocalDateTime localDate = LocalDateTime.now();
+        DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return localDate.format(fmt1);
     }
-
-    @GetMapping("/activeUser/{id}")
-    public ResponseEntity<UserStatus> activeUser(@PathVariable Long id){
-        UserStatus userStatus=userStatusService.findById(id).get();
-        userStatus.setVerify(true);
-        userStatusService.save(userStatus);
-        return new ResponseEntity<>(userStatus, HttpStatus.OK);
-    }
-
 }

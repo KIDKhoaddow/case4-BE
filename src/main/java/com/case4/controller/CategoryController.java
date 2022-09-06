@@ -7,8 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/category")
 @CrossOrigin("*")
@@ -17,14 +15,6 @@ public class CategoryController {
     private ICategorySV categorySV;
 
 
-    @GetMapping("/{idCategory}")
-    public ResponseEntity<Category> getCategory(@PathVariable Long idCategory){
-        Optional<Category> category=categorySV.findById(idCategory);
-        if(!category.isPresent()){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(category.get(),HttpStatus.OK);
-    }
 
     @PostMapping("/create")
     public  ResponseEntity<Category> createCategory(@RequestBody Category category){

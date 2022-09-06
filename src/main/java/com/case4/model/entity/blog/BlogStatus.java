@@ -18,4 +18,5 @@ public class BlogStatus {
     private String updateAt;
     @Enumerated(EnumType.ORDINAL)
     private Status status=Status.PENDING;
+    private boolean verify=true;
 }

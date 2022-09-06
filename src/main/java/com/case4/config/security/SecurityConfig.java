@@ -67,7 +67,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/changePassword/**",
                         "/username/**",
                          "/userInfo/**",
-                        "/**").access("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
+                        "/**",
+                        "/blog/**",
+                        "/like/**").access("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
                 .antMatchers("/admin/**,/category/**").access( "hasAuthority('ROLE_ADMIN')")
                 .anyRequest().authenticated()
 //                .and().formLogin().loginPage("http://localhost:63342/case4-FE/login.html")
