@@ -1,5 +1,6 @@
 package com.case4.controller;
 
+import com.case4.model.dto.LikeCount;
 import com.case4.model.entity.blog.Blog;
 import com.case4.model.entity.classify.Category;
 import com.case4.model.entity.extra.Like;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,5 +61,18 @@ public class UserViewController {
     public  ResponseEntity<?> countLike(@PathVariable Long idBlog){
         List<Like> likeList=likeService.findAllByBlogId(idBlog);
         return new ResponseEntity<>(likeList,HttpStatus.OK);
+    }
+    public List<Blog> findAllBlogById(List<LikeCount> likeCountList){
+        List<Blog> blogs = new ArrayList<>();
+        for (int i=0;i<likeCountList.size();i++){
+            blogs.add(blogService.findById(likeCountList.get(i).getBlogId()).get());
+        }
+        return blogs;
+    }
+
+    @PostMapping("/top-10-like")
+    public ResponseEntity<List<Blog>> demo() {
+        List<LikeCount> likeCounts = likeService.findCount();
+        return new ResponseEntity<>(findAllBlogById(likeCounts), HttpStatus.OK);
     }
 }

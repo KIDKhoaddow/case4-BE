@@ -3,24 +3,35 @@ package com.case4.controller;
 import com.case4.model.dto.PictureForm;
 import com.case4.model.entity.blog.Blog;
 import com.case4.model.entity.blog.BlogStatus;
+import com.case4.model.entity.classify.Category;
 import com.case4.model.entity.extra.Status;
 import com.case4.model.entity.user.UserInfo;
 import com.case4.service.blog.IBlogService;
 import com.case4.service.blogStautus.IBlogStatusService;
+import com.case4.service.category.ICategorySV;
+import com.case4.service.like.ILikeService;
 import com.case4.service.userInfo.IUserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -33,27 +44,42 @@ public class BlogController {
     private IBlogStatusService blogStatusService;
     @Autowired
     private IUserInfoService userInfoService;
+    @Autowired
+    private ICategorySV categorySV;
+    @Autowired
+    private ILikeService likeService;
+
     @Value("${file-upload}")
     private String uploadPath;
 
 
-
     @PostMapping("/create/{idUserInfo}")
-    public ResponseEntity<Blog> createBlog(@PathVariable Long idUserInfo, @RequestBody Blog blog
-            , @ModelAttribute PictureForm pictureForm) {
-
-
+    public ResponseEntity<Blog> createBlog(@PathVariable Long idUserInfo, @RequestPart Blog blog
+            , @RequestPart("fileImage") MultipartFile multipartFile) {
         Optional<UserInfo> userInfo = userInfoService.findById(idUserInfo);
         if (!userInfo.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        String image = "";
-        try {
-            MultipartFile multipartFile = pictureForm.getPicture();
-            image = multipartFile.getOriginalFilename();
-            FileCopyUtils.copy(multipartFile.getBytes(), new File(uploadPath + image));
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+        if (!multipartFile.isEmpty()) {
+            String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+            String uploadDir = "/Image";
+            Path uploadPath = Paths.get(uploadDir);
+            blog.setPicture(fileName);
+            if (!Files.exists(uploadPath)) {
+                try {
+                    Files.createDirectories(uploadPath);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            try {
+                InputStream inputStream = multipartFile.getInputStream();
+                Path filePath = uploadPath.resolve(fileName);
+                Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+                System.out.println(filePath.toFile().getAbsolutePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 //lấy thông số ngày tháng năm khởi tạo
         LocalDate localDate = LocalDate.now();
@@ -62,53 +88,69 @@ public class BlogController {
         String userRegisDate = String.valueOf(localDate);
         blog.setCreateAt(userRegisDate);
 //Lưu vào database
+
         BlogStatus blogStatus = new BlogStatus();
         blogStatusService.save(blogStatus);
         blog.setBlogStatus(blogStatus);
-
+        blog.setUserInfo(userInfo.get());
         blogService.save(blog);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+
+        return new ResponseEntity<>(blog, HttpStatus.CREATED);
     }
 
 
     @PutMapping("/update/{idUserInfo}")
     public ResponseEntity<Blog> updateBlog(@PathVariable Long idUserInfo, @RequestBody Blog blog
             , @ModelAttribute PictureForm pictureForm) {
-
         Optional<UserInfo> userInfo = userInfoService.findById(idUserInfo);
-        if (!userInfo.isPresent()) {
+        Optional<Blog> blogOptional = blogService.findById(blog.getId());
+        if (!userInfo.isPresent() || !blogOptional.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
+        BlogStatus blogStatus = blogOptional.get().getBlogStatus();
+        Category category = categorySV.findById(blog.getCategory().getId()).get();
 
         //lưu ảnh truyền về
-        MultipartFile multipartFile = pictureForm.getPicture();
-        String image = multipartFile.getOriginalFilename();
+        String image = "";
         try {
-            FileCopyUtils.copy(multipartFile.getBytes(), new File(uploadPath + image));
+            if (pictureForm.getPicture() != null) {
+                MultipartFile multipartFile = pictureForm.getPicture();
+                image = multipartFile.getOriginalFilename();
+                FileCopyUtils.copy(multipartFile.getBytes(), new File(uploadPath + image));
+            }
         } catch (IOException e) {
             image = blog.getPicture();
             e.printStackTrace();
         }
-        if (!(image == null)) {
-            blog.setPicture(image);
+        if (!image.equals("")) {
+            blogOptional.get().setPicture(image);
         }
-        blog.getBlogStatus().setUpdateAt(getUpdateAt());
+        blogOptional.get().setTitle(blog.getTitle());
+        blogOptional.get().setCategory(category);
+        blogOptional.get().setContent(blog.getContent());
+        blogOptional.get().setDescribes(blog.getDescribes());
+        blogStatus.setUpdateAt(getUpdateAt());
+        blogStatus.setStatus(blog.getBlogStatus().getStatus());
 
-        blogService.save(blog);
+        blogStatusService.save(blogStatus);
+        blogService.save(blogOptional.get());
         return new ResponseEntity<>(blog, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{idBlog}")
-    public ResponseEntity<UserInfo> deleteUserInfo(@PathVariable Long idBlog) {
+    public ResponseEntity<UserInfo> deleteByUserInfo(@PathVariable Long idBlog) {
+        BlogStatus blogStatus = blogService.findById(idBlog).get().getBlogStatus();
+        blogStatusService.removeById(blogStatus.getId());
+        likeService.deleteLikeByBlogId(idBlog);
         blogService.removeById(idBlog);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @GetMapping("/publicBlog/{id}")
-    public ResponseEntity<BlogStatus> publicBlog(@PathVariable Long id){
-        BlogStatus blogStatus=blogStatusService.findById(id).get();
-        if(blogStatus.getStatus().equals(Status.PENDING)){
-            return new ResponseEntity<>(blogStatus,HttpStatus.NOT_ACCEPTABLE);
+    public ResponseEntity<BlogStatus> publicBlog(@PathVariable Long id) {
+        BlogStatus blogStatus = blogStatusService.findById(id).get();
+        if (blogStatus.getStatus().equals(Status.PENDING)) {
+            return new ResponseEntity<>(blogStatus, HttpStatus.NOT_ACCEPTABLE);
         }
         blogStatus.setStatus(Status.PUBLIC);
 
@@ -116,11 +158,12 @@ public class BlogController {
         blogStatusService.save(blogStatus);
         return new ResponseEntity<>(blogStatus, HttpStatus.OK);
     }
+
     @GetMapping("/privateBlog/{id}")
-    public ResponseEntity<BlogStatus> privateBlog(@PathVariable Long id){
-        BlogStatus blogStatus=blogStatusService.findById(id).get();
-        if(blogStatus.getStatus().equals(Status.PENDING)){
-            return new ResponseEntity<>(blogStatus,HttpStatus.NOT_ACCEPTABLE);
+    public ResponseEntity<BlogStatus> privateBlog(@PathVariable Long id) {
+        BlogStatus blogStatus = blogStatusService.findById(id).get();
+        if (blogStatus.getStatus().equals(Status.PENDING)) {
+            return new ResponseEntity<>(blogStatus, HttpStatus.NOT_ACCEPTABLE);
         }
         blogStatus.setStatus(Status.PRIVATE);
 
@@ -128,9 +171,20 @@ public class BlogController {
         blogStatusService.save(blogStatus);
         return new ResponseEntity<>(blogStatus, HttpStatus.OK);
     }
-    private String getUpdateAt(){
+
+
+    @GetMapping("/listBlog/{idUser}")
+    public ResponseEntity<List<Blog>> getListBlogByUserId(@PathVariable Long idUser) {
+        UserInfo userInfo = userInfoService.findByUserId(idUser);
+        List<Blog> blogList = blogService.findAllByUserInfo(userInfo);
+        return new ResponseEntity<>(blogList, HttpStatus.OK);
+    }
+
+    private String getUpdateAt() {
         LocalDateTime localDate = LocalDateTime.now();
         DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return localDate.format(fmt1);
     }
+
+
 }

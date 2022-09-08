@@ -1,5 +1,6 @@
 package com.case4.service.like;
 
+import com.case4.model.dto.LikeCount;
 import com.case4.model.dto.LikesBlog;
 import com.case4.model.entity.blog.Blog;
 import com.case4.model.entity.extra.Like;
@@ -50,5 +51,15 @@ public class LikeServiceImpl implements ILikeService{
     @Override
     public List< LikesBlog> findCountLikeByBlogId(Long blogId) {
         return likeRepo.findCountLikeByBlogId(blogId);
+    }
+
+    @Override
+    public void deleteLikeByBlogId(Long blogId) {
+        likeRepo.deleteLikeByBlogId(blogId);
+    }
+
+    @Override
+    public List<LikeCount> findCount() {
+        return likeRepo.findCount();
     }
 }

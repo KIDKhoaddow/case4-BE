@@ -1,5 +1,6 @@
 package com.case4.controller;
 
+import com.case4.model.dto.PictureForm;
 import com.case4.model.entity.classify.Category;
 import com.case4.service.category.ICategorySV;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class CategoryController {
     }
 
     @PutMapping("/update")
-    public  ResponseEntity<Category> updateCategory(@RequestBody Category category){
+    public  ResponseEntity<Category> updateCategory(@RequestBody Category category ,@ModelAttribute PictureForm pictureForm ){
         categorySV.save(category);
         return new ResponseEntity<>(category,HttpStatus.CREATED);
     }

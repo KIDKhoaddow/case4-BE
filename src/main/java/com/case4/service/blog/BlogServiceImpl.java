@@ -1,6 +1,7 @@
 package com.case4.service.blog;
 
 import com.case4.model.entity.blog.Blog;
+import com.case4.model.entity.user.UserInfo;
 import com.case4.repository.IBlogRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,5 +35,10 @@ public class BlogServiceImpl implements IBlogService {
     @Override
     public List<Blog> findAllByCategory_Name(String categoryName) {
         return iBlogRepo.findAllByCategory_Name(categoryName);
+    }
+
+    @Override
+    public List<Blog> findAllByUserInfo(UserInfo userInfo) {
+        return iBlogRepo.findAllByUserInfo(userInfo);
     }
 }

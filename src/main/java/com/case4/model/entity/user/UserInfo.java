@@ -33,6 +33,7 @@ public class UserInfo {
     private User user;
 
 
+
     public UserInfo(String name, String email, String avatar, String phoneNumber, String birthDay, String registerDate, UserStatus userStatus, User user) {
         this.name = name;
         this.email = email;
