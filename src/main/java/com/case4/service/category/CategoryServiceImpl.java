@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 @Service
-public class CategorySV implements ICategorySV{
+public class CategoryServiceImpl implements ICategoryService {
 
     @Autowired
     private ICategoryRepo categoryRepo;

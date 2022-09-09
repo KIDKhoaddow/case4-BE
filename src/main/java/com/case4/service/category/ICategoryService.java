@@ -6,7 +6,7 @@ import com.case4.service.IGeneralService;
 
 import java.util.Optional;
 
-public interface ICategorySV extends IGeneralService<Category> {
+public interface ICategoryService extends IGeneralService<Category> {
 
     Iterable<ShowCategory> getAllCategoryByUserId(Long user_id);
     Optional<Category> findByName(String name);

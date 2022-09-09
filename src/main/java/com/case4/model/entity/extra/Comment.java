@@ -1,12 +1,12 @@
 package com.case4.model.entity.extra;
 
-import com.case4.model.entity.user.User;
+import com.case4.model.entity.blog.Blog;
+import com.case4.model.entity.user.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -19,7 +19,9 @@ public class Comment {
     private  String content;
     private  String createAt;
     @ManyToOne
-    private User user;
-    @OneToMany
-    private List<Comment> commentList ;
+    private UserInfo userInfo;
+    @ManyToOne
+    private Blog blog;
+    @ManyToOne
+    private Comment commentParent ;
 }

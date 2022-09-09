@@ -8,7 +8,7 @@ import com.case4.model.entity.extra.Status;
 import com.case4.model.entity.user.UserInfo;
 import com.case4.service.blog.IBlogService;
 import com.case4.service.blogStautus.IBlogStatusService;
-import com.case4.service.category.ICategorySV;
+import com.case4.service.category.ICategoryService;
 import com.case4.service.like.ILikeService;
 import com.case4.service.userInfo.IUserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ public class BlogController {
     @Autowired
     private IUserInfoService userInfoService;
     @Autowired
-    private ICategorySV categorySV;
+    private ICategoryService categorySV;
     @Autowired
     private ILikeService likeService;
 

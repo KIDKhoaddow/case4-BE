@@ -2,7 +2,7 @@ package com.case4.controller;
 
 import com.case4.model.dto.PictureForm;
 import com.case4.model.entity.classify.Category;
-import com.case4.service.category.ICategorySV;
+import com.case4.service.category.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin("*")
 public class CategoryController {
     @Autowired
-    private ICategorySV categorySV;
+    private ICategoryService categorySV;
 
 
 

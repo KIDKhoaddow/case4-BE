@@ -3,9 +3,11 @@ package com.case4.controller;
 import com.case4.model.dto.LikeCount;
 import com.case4.model.entity.blog.Blog;
 import com.case4.model.entity.classify.Category;
+import com.case4.model.entity.extra.Comment;
 import com.case4.model.entity.extra.Like;
 import com.case4.service.blog.IBlogService;
-import com.case4.service.category.ICategorySV;
+import com.case4.service.category.ICategoryService;
+import com.case4.service.comment.ICommentService;
 import com.case4.service.like.ILikeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,11 +23,14 @@ import java.util.Optional;
 @RequestMapping("/userView")
 public class UserViewController {
     @Autowired
-    private ICategorySV categorySV;
+    private ICategoryService categorySV;
     @Autowired
     private IBlogService blogService;
     @Autowired
     private ILikeService likeService;
+
+    @Autowired
+    private ICommentService commentService;
     @GetMapping("/listCategory")
     public ResponseEntity<List<Category>> getListCategory() {
         return new ResponseEntity<>(categorySV.findAll(), HttpStatus.OK);
@@ -64,8 +69,8 @@ public class UserViewController {
     }
     public List<Blog> findAllBlogById(List<LikeCount> likeCountList){
         List<Blog> blogs = new ArrayList<>();
-        for (int i=0;i<likeCountList.size();i++){
-            blogs.add(blogService.findById(likeCountList.get(i).getBlogId()).get());
+        for (LikeCount likeCount : likeCountList) {
+            blogs.add(blogService.findById(likeCount.getBlogId()).get());
         }
         return blogs;
     }
@@ -75,4 +80,16 @@ public class UserViewController {
         List<LikeCount> likeCounts = likeService.findCount();
         return new ResponseEntity<>(findAllBlogById(likeCounts), HttpStatus.OK);
     }
+
+
+    @GetMapping("/listComment/{idBlog}")
+    public  ResponseEntity<List<Comment>> getCommentByBlogId(@PathVariable Long idBlog){
+        return new ResponseEntity<>(commentService.findAllByBlog_Id(idBlog),HttpStatus.OK);
+    }
+    @GetMapping("/listCountComment/{idBlog}")
+    public  ResponseEntity<?> countListCommentByBlogId(@PathVariable Long idBlog){
+        return new ResponseEntity<>(commentService.findAllByBlog_Id(idBlog).size(),HttpStatus.OK);
+    }
+
+
 }
