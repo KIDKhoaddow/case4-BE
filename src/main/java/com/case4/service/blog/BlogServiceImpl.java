@@ -1,5 +1,7 @@
 package com.case4.service.blog;
 
+import com.case4.model.dto.BlogMostLike;
+import com.case4.model.dto.BlogsOfUser;
 import com.case4.model.entity.blog.Blog;
 import com.case4.model.entity.user.UserInfo;
 import com.case4.repository.IBlogRepo;
@@ -35,6 +37,16 @@ public class BlogServiceImpl implements IBlogService {
     @Override
     public List<Blog> findAllByCategory_Name(String categoryName) {
         return iBlogRepo.findAllByCategory_Name(categoryName);
+    }
+
+    @Override
+    public List<BlogsOfUser> findBlogsOfUser() {
+        return iBlogRepo.findBlogsOfUser();
+    }
+
+    @Override
+    public List<BlogMostLike> findBlogsMostLike() {
+        return iBlogRepo.findBlogsMostLike();
     }
 
     @Override

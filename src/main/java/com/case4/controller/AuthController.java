@@ -2,6 +2,7 @@ package com.case4.controller;
 
 import com.case4.model.dto.ChangePassword;
 import com.case4.model.dto.JwtResponse;
+import com.case4.model.dto.ResponseMessage;
 import com.case4.model.dto.SignUpForm;
 import com.case4.model.entity.blog.Blog;
 import com.case4.model.entity.extra.Status;
@@ -73,9 +74,15 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody SignUpForm user) {
+    public ResponseEntity<?> register(@RequestBody SignUpForm user) {
+        ResponseMessage message=new ResponseMessage();
         if (!user.getPassword().equals(user.getConfirmPassword())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            message.setMessage("Confirm-password does not match password");
+            return new ResponseEntity<>(message,HttpStatus.CONFLICT);
+        }
+        if(userService.isUsernameExist(user.getUsername())){
+            message.setMessage("Registration account is duplicated");
+            return new ResponseEntity<>(message,HttpStatus.FOUND);
         }
         String avatar = "profile.png";
         User user1 = new User(user.getUsername(), user.getPassword());
@@ -88,7 +95,6 @@ public class AuthController {
         UserStatus userStatus = new UserStatus();
         userStatusService.save(userStatus);
         userService.save(user1);
-
         UserInfo userInfo = new UserInfo(
                 user.getName(),
                 user.getEmail(),
@@ -100,7 +106,8 @@ public class AuthController {
                 user1
         );
         userInfoService.save(userInfo);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        message.setMessage("register complete");
+        return new ResponseEntity<>(message,HttpStatus.CREATED);
     }
 
     @PostMapping("/changePassword/{id}")

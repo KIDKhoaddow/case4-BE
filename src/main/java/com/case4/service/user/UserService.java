@@ -3,6 +3,7 @@ package com.case4.service.user;
 import com.case4.model.dto.UserPrincipal;
 import com.case4.model.entity.user.Role;
 import com.case4.model.entity.user.User;
+import com.case4.repository.IUserInfoRepo;
 import com.case4.repository.IUserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class UserService implements IUserService {
     @Autowired
     private IUserRepo userRepository;
+    private IUserInfoRepo userInfoRepo;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -57,5 +59,10 @@ public class UserService implements IUserService {
     @Override
     public User findByUserName(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public boolean isUsernameExist(String username) {
+        return userRepository.existsByUsername(username);
     }
 }

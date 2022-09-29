@@ -1,5 +1,7 @@
 package com.case4.controller;
 
+import com.case4.model.dto.BlogMostLike;
+import com.case4.model.dto.BlogsOfUser;
 import com.case4.model.dto.LikeCount;
 import com.case4.model.entity.blog.Blog;
 import com.case4.model.entity.classify.Category;
@@ -90,6 +92,13 @@ public class UserViewController {
     public  ResponseEntity<?> countListCommentByBlogId(@PathVariable Long idBlog){
         return new ResponseEntity<>(commentService.findAllByBlog_Id(idBlog).size(),HttpStatus.OK);
     }
-
+@GetMapping("/listBlogsOfUser")
+    public  ResponseEntity<List<BlogsOfUser>> getBlogsOfUser(){
+        return new ResponseEntity<>(blogService.findBlogsOfUser(),HttpStatus.OK);
+}
+    @GetMapping("/listBlogsMostLike")
+    public  ResponseEntity<List<BlogMostLike>> getBlogsMostLike(){
+        return new ResponseEntity<>(blogService.findBlogsMostLike(),HttpStatus.OK);
+    }
 
 }

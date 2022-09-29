@@ -46,7 +46,9 @@ public class CommentController {
         commentService.save(comment);
         return new ResponseEntity<>(comment,HttpStatus.OK);
     }
-    @GetMapping("/{idComment}/{idBlog}/{idUserInfo}")
+
+
+    @PostMapping("/{idComment}/{idBlog}/{idUserInfo}")
     public ResponseEntity<?> createComment(@PathVariable Long idBlog,@PathVariable Long idComment,
                                            @PathVariable Long idUserInfo , @RequestBody Comment comment){
         Optional<Comment> parentComment=commentService.findById(idComment);
